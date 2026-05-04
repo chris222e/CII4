@@ -66,7 +66,7 @@ class Cliente extends BaseController
     if (!$this->validate([
       'apellidos' => 'required|string|max_length[40]',
       'nombres'   => 'required|string|max_length[40]',
-      'dni'       => 'required|string|exact_length[8]|numeric',
+      'dni'       => 'required|string|exact_length[8]|numeric|is_unique[clientes.dni]',
       'telefono'  => 'required|string|exact_length[9]|numeric'
     ])) {
       return $this->response->setJSON([

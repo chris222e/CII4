@@ -55,13 +55,28 @@ class Cliente extends BaseController
   }
 
   /**
-   * Almacena los datos en la tabla Clientes
-   * @return \CodeIgniter\HTTP\RedirectResponse
+   * Almacena los datos en la tabla Clientes de forma asincrónica
+   * Retorna respuesta JSON
+   * @return \CodeIgniter\HTTP\ResponseInterface
    */
   public function registrarCliente(){
     $cliente = new ClienteModel();
 
-    //Se debe validar antes de insertar los datos
+    //Validar los datos del formulario
+    if (!$this->validate([
+      'apellidos' => 'required|string|max_length[40]',
+      'nombres'   => 'required|string|max_length[40]',
+      'dni'       => 'required|string|exact_length[8]|numeric',
+      'telefono'  => 'required|string|exact_length[9]|numeric'
+    ])) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'Error de validación',
+        'errors'  => $this->validator->getErrors()
+      ])->setStatusCode(400);
+    }
+
+    //Se deben validar antes de insertar los datos
     $apellidos = $this->request->getPost('apellidos');
     $nombres = $this->request->getPost('nombres');
     $dni = $this->request->getPost('dni');
@@ -74,24 +89,96 @@ class Cliente extends BaseController
       'telefono'  => $telefono
     ]);
 
-    return redirect()->to('/clientes');
+    return $this->response->setJSON([
+      'success' => true,
+      'message' => 'Cliente registrado correctamente',
+      'id'      => $cliente->getInsertID()
+    ])->setStatusCode(201);
+  }
+
+  /**
+   * Obtiene los datos de un cliente específico (asincrónico)
+   * @param int $id
+   * @return \CodeIgniter\HTTP\ResponseInterface
+   */
+  public function obtenerCliente(int $id = null){
+    $cliente = new ClienteModel();
+    
+    if ($id === null) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'ID requerido'
+      ])->setStatusCode(400);
+    }
+
+    $registro = $cliente->find($id);
+
+    if (!$registro) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'Cliente no encontrado'
+      ])->setStatusCode(404);
+    }
+
+    return $this->response->setJSON([
+      'success' => true,
+      'data'    => $registro
+    ])->setStatusCode(200);
   }
 
   /**
    * Elimina el registro de manera física de la tabla
    * @param int $id
-   * @return \CodeIgniter\HTTP\RedirectResponse
+   * @return \CodeIgniter\HTTP\ResponseInterface
    */
   public function eliminar(int $id = null){
     $cliente = new ClienteModel();
+    
+    if ($id === null) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'ID requerido'
+      ])->setStatusCode(400);
+    }
+
+    if (!$cliente->find($id)) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'Cliente no encontrado'
+      ])->setStatusCode(404);
+    }
+
     $cliente->delete($id);
-    return redirect()->to('/clientes');
+    
+    return $this->response->setJSON([
+      'success' => true,
+      'message' => 'Cliente eliminado correctamente'
+    ])->setStatusCode(200);
   }
 
+  /**
+   * Actualiza un cliente de forma asincrónica
+   * @return \CodeIgniter\HTTP\ResponseInterface
+   */
   public function actualizar(){
     $cliente = new ClienteModel();
 
-    $idcliente = $this->request->getPost('idcliente');
+    //Validar los datos
+    if (!$this->validate([
+      'id'        => 'required|integer|is_not_empty',
+      'apellidos' => 'required|string|max_length[40]',
+      'nombres'   => 'required|string|max_length[40]',
+      'dni'       => 'required|string|exact_length[8]|numeric',
+      'telefono'  => 'required|string|exact_length[9]|numeric'
+    ])) {
+      return $this->response->setJSON([
+        'success' => false,
+        'message' => 'Error de validación',
+        'errors'  => $this->validator->getErrors()
+      ])->setStatusCode(400);
+    }
+
+    $idcliente = $this->request->getPost('id');
     $apellidos = $this->request->getPost('apellidos');
     $nombres = $this->request->getPost('nombres');
     $dni = $this->request->getPost('dni');
@@ -104,7 +191,25 @@ class Cliente extends BaseController
       'telefono'  => $telefono
     ]);
 
-    return redirect()->to('/clientes');
+    return $this->response->setJSON([
+      'success' => true,
+      'message' => 'Cliente actualizado correctamente'
+    ])->setStatusCode(200);
+  }
+
+  /**
+   * Obtiene todos los clientes en formato JSON (asincrónico)
+   * @return \CodeIgniter\HTTP\ResponseInterface
+   */
+  public function listar(){
+    $cliente = new ClienteModel();
+    $clientes = $cliente->findAll();
+
+    return $this->response->setJSON([
+      'success' => true,
+      'data'    => $clientes,
+      'total'   => count($clientes)
+    ])->setStatusCode(200);
   }
 
 }

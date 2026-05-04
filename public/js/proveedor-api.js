@@ -1,22 +1,22 @@
 /**
- * API Helper para operaciones asincrónicas con Clientes
+ * API Helper para operaciones asincrónicas con Proveedores
  * Maneja todas las llamadas AJAX al servidor
  */
 
-class ClienteAPI {
+class ProveedorAPI {
   
-  constructor(baseUrl = '/clientes') {
+  constructor(baseUrl = '/proveedor') {
     this.baseUrl = baseUrl;
   }
 
   /**
-   * Registra un nuevo cliente de forma asincrónica
-   * @param {Object} datos - Datos del cliente {apellidos, nombres, dni, telefono}
+   * Registra un nuevo proveedor de forma asincrónica
+   * @param {Object} datos - Datos del proveedor {nombre, contacto, telefono, email}
    * @returns {Promise}
    */
   async registrar(datos) {
     try {
-      const response = await fetch(`${this.baseUrl}/registarCliente`, {
+      const response = await fetch(`${this.baseUrl}/registarProveedor`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,13 +26,13 @@ class ClienteAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Error al registrar cliente:', error);
+      console.error('Error al registrar proveedor:', error);
       return { success: false, message: 'Error en la conexión' };
     }
   }
 
   /**
-   * Obtiene todos los clientes en formato JSON
+   * Obtiene todos los proveedores en formato JSON
    * @returns {Promise}
    */
   async listar() {
@@ -40,29 +40,29 @@ class ClienteAPI {
       const response = await fetch(`${this.baseUrl}/listar`);
       return await response.json();
     } catch (error) {
-      console.error('Error al listar clientes:', error);
+      console.error('Error al listar proveedores:', error);
       return { success: false, message: 'Error en la conexión' };
     }
   }
 
   /**
-   * Obtiene un cliente específico por ID
-   * @param {number} id - ID del cliente
+   * Obtiene un proveedor específico por ID
+   * @param {number} id - ID del proveedor
    * @returns {Promise}
    */
   async obtener(id) {
     try {
-      const response = await fetch(`${this.baseUrl}/obtenerCliente/${id}`);
+      const response = await fetch(`${this.baseUrl}/obtenerProveedor/${id}`);
       return await response.json();
     } catch (error) {
-      console.error('Error al obtener cliente:', error);
+      console.error('Error al obtener proveedor:', error);
       return { success: false, message: 'Error en la conexión' };
     }
   }
 
   /**
-   * Actualiza un cliente de forma asincrónica
-   * @param {Object} datos - Datos del cliente {id, apellidos, nombres, dni, telefono}
+   * Actualiza un proveedor de forma asincrónica
+   * @param {Object} datos - Datos del proveedor {id, nombre, contacto, telefono, email}
    * @returns {Promise}
    */
   async actualizar(datos) {
@@ -77,14 +77,14 @@ class ClienteAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Error al actualizar cliente:', error);
+      console.error('Error al actualizar proveedor:', error);
       return { success: false, message: 'Error en la conexión' };
     }
   }
 
   /**
-   * Elimina un cliente de forma asincrónica
-   * @param {number} id - ID del cliente
+   * Elimina un proveedor de forma asincrónica
+   * @param {number} id - ID del proveedor
    * @returns {Promise}
    */
   async eliminar(id) {
@@ -95,11 +95,11 @@ class ClienteAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Error al eliminar cliente:', error);
+      console.error('Error al eliminar proveedor:', error);
       return { success: false, message: 'Error en la conexión' };
     }
   }
 }
 
 // Instancia global para usar en las vistas
-const clienteAPI = new ClienteAPI();
+const proveedorAPI = new ProveedorAPI();

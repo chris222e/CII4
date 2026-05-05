@@ -31,5 +31,19 @@ $routes->get('/clientes/eliminar/(:num)', 'Cliente::eliminar/$1');
 $routes->get('/clientes/buscar/(:num)', 'Cliente::buscar/$1'); //Antes de actualizar, tenemos que buscar
 $routes->post('/clientes/actualizar', 'Cliente::actualizar'); //Después de buscar, actualizamos los datos
 
+// PROVEEDORES
+// =====================
 $routes->get('/proveedores','Proveedor::index');
+$routes->get('/proveedores/registrar', 'Proveedor::create');
+$routes->post('/proveedores/guardar','Proveedor::registrarProveedor');
+$routes->get('/proveedores/eliminar/(:num)', 'Proveedor::eliminar/$1');
+$routes->get('/proveedores/buscar/(:num)', 'Proveedor::buscar/$1');
+$routes->post('/proveedores/actualizar', 'Proveedor::actualizar');
+
+
+
+
+
+
+
 $routes->get('/productos','Producto::index');
